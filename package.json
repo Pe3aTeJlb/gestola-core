@@ -1,0 +1,246 @@
+{
+  "name": "gestola-core",
+  "displayName": "gestola-core",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+
+
+
+    "commands": [
+      {
+        "command": "gestola-core.test-msg",
+        "title": "Show msg"
+      },
+      {
+        "command": "gestola-core.create-project",
+        "title": "Create Project",
+        "icon": "$(file-directory-create)"
+      },
+      {
+        "command": "gestola-core.open-project",
+        "title": "Open Existing Project",
+        "icon": "$(plus)"
+      },
+      {
+        "command": "gestola-core.set-project",
+        "title": "Switch to Project"
+      },
+      {
+        "command": "gestola-core.close-project",
+        "title": "Close Project",
+        "icon": "$(close)"
+      },
+
+
+
+      {
+        "command": "gestola-core.openToSide",
+        "title": "Open to the Side"
+      },
+      {
+        "command": "gestola-core.revealFileInOS",
+        "title": "Open Containing Folder"
+      },
+      {
+        "command": "gestola-core.openWith",
+        "title": "Open With..."
+      },
+      {
+        "command": "gestola-core.openInIntegratedTerminal",
+        "title": "Open in Integrated Terminal"
+      },
+      {
+        "command": "gestola-core.diff",
+        "title": "Select for Compare"
+      },
+      {
+        "command": "gestola-core.copyFilePath",
+        "title": "Copy Path"
+      },
+      {
+        "command": "gestola-core.copyRelativeFilePath",
+        "title": "Copy Relative Path"
+      },
+      {
+        "command": "gestola-core.delete",
+        "title": "Delete"
+      },
+
+      {
+        "command": "gestola-core.copy",
+        "title": "Copy"
+      },
+      {
+        "command": "gestola-core.paste",
+        "title": "Paste"
+      },
+
+
+
+      {
+        "command": "gestola-core.refresh",
+        "title": "Refresh"
+      }
+
+    ],
+    "menus": {
+      "view/title": [
+
+        {
+          "command": "gestola-core.open-project",
+          "group": "navigation@1",
+          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened"
+        },
+        {
+          "command": "gestola-core.create-project",
+          "group": "navigation@2",
+          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened"
+        },
+        {
+          "command": "gestola-core.refresh",
+          "when": "view in gestola-core.explorerFileViews"
+        }
+
+      ],
+      "view/item/context": [
+
+        {
+          "command": "gestola-core.set-project",
+          "when": "view == gestola-explorer-projects",
+          "group": "proj@1"
+        },
+        {
+          "command": "gestola-core.close-project",
+          "when": "view == gestola-explorer-projects",
+          "group": "inline"
+        },
+        
+
+
+        {
+          "command": "gestola-core.openToSide",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.revealFileInOS",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.openWith",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.openInIntegratedTerminal",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.diff",
+          "when": "view in gestola-core.explorerFileViews && gestola-core.selectionContextDouble"
+        },
+        {
+          "command": "gestola-core.copyFilePath",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.copyRelativeFilePath",
+          "when": "view in gestola-core.explorerFileViews"
+        },
+        {
+          "command": "gestola-core.delete",
+          "when": "view in gestola-core.explorerFileViews"
+        }
+        
+
+      ]
+    },
+
+
+
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gestola-explorer",
+          "title": "Gestola Development Route",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "gestola-explorer-projects",
+        "contents": "You have not yer created a project.\n[Create project](command:gestola-core.create-project)\n[Open existing](command:gestola-core.open-project)"
+      }
+    ],
+    "views": {
+      "gestola-explorer": [
+        {
+          "id": "gestola-explorer-projects",
+          "name": "Projects",
+          "visibility": "visible"
+        },
+        {
+          "id": "gestola-explorer-systemLvl",
+          "name": "System",
+          "when": "gestola-core.isProjOpened",
+          "visibility": "visible"
+        },
+        {
+          "id": "gestola-explorer-rtlLvl",
+          "name": "RTL",
+          "when": "gestola-core.isProjOpened",
+          "visibility": "visible"
+        },
+        {
+          "id": "gestola-explorer-topologyLvl",
+          "name": "Topology",
+          "when": "gestola-core.isProjOpened",
+          "visibility": "visible"
+        },
+        {
+          "id": "gestola-explorer-otherFiles",
+          "name": "Other",
+          "when": "gestola-core.isProjOpened",
+          "visibility": "collapsed"
+        }
+      ]
+    }
+  },
+
+
+
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
+    "eslint": "^8.52.0",
+    "glob": "^7.2.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2",
+    "@types/mkdirp": "^1.0.2",
+    "@types/rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "mkdirp": "^3.0.1",
+		"rimraf": "^5.0.5"
+  }
+}
