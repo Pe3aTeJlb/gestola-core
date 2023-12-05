@@ -21,6 +21,8 @@ export class Project{
     topologyFolderPath: string;
     otherFolderPath: string;
 
+    isFavorite: boolean;    
+
     public static regexp =  [
                                 new RegExp('system', "i"), 
                                 new RegExp('rtl', "i"), 
@@ -49,6 +51,12 @@ export class Project{
         this.topologyFolderUri = vscode.Uri.file(this.topologyFolderPath);
         this.otherFolderUri = vscode.Uri.file(this.otherFolderPath);
 
+        this.isFavorite = false;
+
+    }
+
+    setFavorite() {
+        this.isFavorite = !this.isFavorite;
     }
 
 }

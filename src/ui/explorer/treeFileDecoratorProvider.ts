@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ProjectManager } from "../../../project";
+import { ProjectManager } from "../../project";
 
 export class TreeFileDecorationProvider implements vscode.FileDecorationProvider {
 
@@ -13,17 +13,36 @@ export class TreeFileDecorationProvider implements vscode.FileDecorationProvider
         this.projManager.onDidChangeProject(() => {
             this._onDidChangeFileDecorations.fire(projManager.openedProjects.map(i => i.rootUri));
         });
+        this.projManager.onDidChangeProjectFavoriteStatus((event) => {
+            this._onDidChangeFileDecorations.fire(projManager.openedProjects.map(i => i.rootUri));
+        });
     } 
   
     async provideFileDecoration(uri: vscode.Uri): Promise<vscode.FileDecoration | undefined> {
 
-        if (uri.fsPath === this.projManager.currProj?.rootPath) {
-            return {
-                badge: "⇐"
-            };
-        } else {
-            return undefined;
-        } 
+        let badge: string = "";
+
+        if(this.projManager.isOpenedProject(uri)){
+
+            if(this.projManager.getOpenedProject(uri)[0].isFavorite){
+                badge += "★";
+            }
+
+            if (uri.fsPath === this.projManager.currProj?.rootPath) {
+                badge += "⇐";
+            }
+
+            if (badge.length > 0) {
+
+                return {
+                    badge: badge
+                };
+
+            } else {
+                return undefined;
+            } 
+
+        }
 
     }
   

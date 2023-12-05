@@ -3,7 +3,7 @@ import { Entry, FileSystemProvider } from "./filesExplorer/filesProvider";
 import { ProjectManager } from "../../project";
 import { ProjectsProvider } from "./projectsExplorer/projectsProvider";
 import { ExplorerCommands } from "./explorerCommands";
-import { TreeFileDecorationProvider } from "./projectsExplorer/treeFileDecoratorProvider";
+import { TreeFileDecorationProvider } from "./treeFileDecoratorProvider";
 
 export class GestolaExplorer{
 

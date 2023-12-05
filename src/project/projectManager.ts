@@ -12,6 +12,10 @@ export interface ProjectsListChangeEvent {
     readonly projects: Project[];
 }
 
+export interface ProjectFavoriteStatusChangeEvent {
+    readonly project: Project;
+}
+
 export class ProjectManager {
 
     projRoot: vscode.WorkspaceFolder | undefined;
@@ -21,11 +25,13 @@ export class ProjectManager {
 
     private _onDidChangeProject: vscode.EventEmitter<ProjectChangeEvent>;
     private _onDidChangeProjectList: vscode.EventEmitter<ProjectsListChangeEvent>;
+    private _onDidChangeFavoriteStatus: vscode.EventEmitter<ProjectFavoriteStatusChangeEvent>;
 
     constructor(context: vscode.ExtensionContext){
 
         this._onDidChangeProject = new vscode.EventEmitter<ProjectChangeEvent>();
         this._onDidChangeProjectList = new vscode.EventEmitter<ProjectsListChangeEvent>();
+        this._onDidChangeFavoriteStatus = new vscode.EventEmitter<ProjectFavoriteStatusChangeEvent>();
     
         this.openedProjects = [];
 
@@ -110,6 +116,20 @@ export class ProjectManager {
         this.fireProjectsListChangeEvent();
     }
 
+    addProjectByDrop(uri: vscode.Uri | undefined){
+        
+        if(!uri){
+            return;
+        }
+
+        if(this.checkForGestolaProject(uri.fsPath)){
+            this.addProject(uri);
+        } else {
+            vscode.commands.executeCommand("gestola-core.test-msg", "Selected directory is not a Gestola project");
+        }
+
+    }
+
     addProject(uri: vscode.Uri){
 
         vscode.workspace.updateWorkspaceFolders(
@@ -139,11 +159,15 @@ export class ProjectManager {
 
     setProject(proj: Project){
         this.currProj = proj;
-        vscode.commands.executeCommand('setContext', 'gestola-core.projName', proj.projName);
         this.fireProjectChangeEvent();
     }
 
     //Context
+
+    setFavorite(proj: Project){
+        proj.setFavorite();
+        this.fireProjectFavoriteStatusChangeEvent(proj);
+    }
 
     //Listeners
     private fireProjectChangeEvent(){
@@ -155,6 +179,10 @@ export class ProjectManager {
         this._onDidChangeProjectList.fire({projects: this.openedProjects} as ProjectsListChangeEvent);
     }
 
+    private fireProjectFavoriteStatusChangeEvent(proj: Project){
+        this._onDidChangeFavoriteStatus.fire({project: proj} as ProjectFavoriteStatusChangeEvent);
+    }
+
     get onDidChangeProject(): vscode.Event<ProjectChangeEvent> {
 		return this._onDidChangeProject.event;
 	}
@@ -162,6 +190,10 @@ export class ProjectManager {
     get onDidChangeProjectList(): vscode.Event<ProjectsListChangeEvent> {
 		return this._onDidChangeProjectList.event;
 	}
+
+    get onDidChangeProjectFavoriteStatus(): vscode.Event<ProjectFavoriteStatusChangeEvent> {
+        return this._onDidChangeFavoriteStatus.event;
+    }
 
     //Utils
 
@@ -176,6 +208,14 @@ export class ProjectManager {
             dirs.filter( i => i.match(new RegExp('other', "i"))).length    === 1 
         );
 
+    }
+
+    public getOpenedProject(uri: vscode.Uri) : Project[] {
+        return this.openedProjects.filter(i => i.rootUri.fsPath === uri.fsPath);
+    }
+
+    public isOpenedProject(uri: vscode.Uri) : boolean{
+        return this.openedProjects.filter(i => i.rootUri.fsPath === uri.fsPath).length > 0;
     }
 
 }

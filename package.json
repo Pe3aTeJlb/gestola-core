@@ -39,6 +39,11 @@
         "title": "Close Project",
         "icon": "$(close)"
       },
+      {
+        "command": "gestola-core.set-project-favorite",
+        "title": "Set Favorite",
+        "icon": "$(star)"
+      },
 
 
 
@@ -119,9 +124,14 @@
           "group": "proj@1"
         },
         {
+          "command": "gestola-core.set-project-favorite",
+          "when": "view == gestola-explorer-projects",
+          "group": "inline@1"
+        },
+        {
           "command": "gestola-core.close-project",
           "when": "view == gestola-explorer-projects",
-          "group": "inline"
+          "group": "inline@2"
         },
         
 

@@ -1,67 +1,69 @@
 import * as vscode from 'vscode';
-import { ProjectManager } from '../../../project';
+import { Project, ProjectManager } from '../../../project';
 import { ProjectTreeItem } from './projectTreeItem';
-import { TreeItemCollection } from '../abstractTree/treeItemCollection';
-import { ProjectsDragAndDropController } from './projectsDragAndDropController';
 
-export class ProjectsProvider implements vscode.TreeDataProvider<ProjectTreeItem> {
+export class ProjectsProvider implements vscode.TreeDataProvider<Project>, vscode.TreeDragAndDropController<Project> {
 
     projManager: ProjectManager;
-	treeView: vscode.TreeView<ProjectTreeItem>;
-	treeItemCollection: TreeItemCollection;
-	projDragAndDropController: ProjectsDragAndDropController;
+	treeView: vscode.TreeView<Project>;
+
+	dropMimeTypes = ['text/uri-list'];
+	dragMimeTypes = [];
 
     constructor(context: vscode.ExtensionContext, projManager: ProjectManager){
 
         this.projManager = projManager;
         this.projManager.onDidChangeProjectList(() => this.refresh());
-		this.treeItemCollection = new TreeItemCollection();
-		this.projDragAndDropController = new ProjectsDragAndDropController();
+		this.projManager.onDidChangeProjectFavoriteStatus(() => this.refresh());
+		this.projManager.onDidChangeProject((event) => {
+			if(event.proj){
+				this.treeView.title = "projects: " + event.proj.projName;
+			} else {
+				this.treeView.title = "projects";
+			}
+		});
 
 		this.treeView = vscode.window.createTreeView(
             'gestola-explorer-projects', 
             {
-                treeDataProvider: this
-                //dragAndDropController: this.projDragAndDropController
+                treeDataProvider: this,
+                dragAndDropController: this
             }
         );
-
+		if(projManager.currProj){
+			this.treeView.title = "projects: " + projManager.currProj.projName;
+		} else {
+			this.treeView.title = "projects";
+		}
 		context.subscriptions.push(this.treeView);
 
     }
 
-	getChildren(element?: ProjectTreeItem): Promise<ProjectTreeItem[]> {
-
-		if(element){
-			return element.getChildren();
-		}
-
-		if (!element && this.treeItemCollection.hasChildren) {
-			return Promise.resolve(this.treeItemCollection.items);
-		}
-
-		if (!element && !this.treeItemCollection.hasChildren) {
-
-			for(let i = 0; i < this.projManager.openedProjects.length; i++) {
-				await this.treeItemCollection.addProject(this.projManager.openedProjects[i]);
+	async getChildren(element?: Project): Promise<Project[]> {
+		return Promise.resolve(this.projManager.openedProjects.sort((a, b) => {
+			if((a.isFavorite && b.isFavorite) || (!a.isFavorite && !b.isFavorite)){
+				return a.projName.localeCompare(b.projName);	
+			} else {
+				return a.isFavorite ? -1 : 1;
 			}
-
-			return this.treeItemCollection.items;
-
-		}
-
-		return Promise.resolve(this.projManager.openedProjects);
+		}));
 	}
 
-	getTreeItem(element: ProjectTreeItem): ProjectTreeItem {
-		return element;
+	async getTreeItem(element: Project): Promise<ProjectTreeItem> {
+		return Promise.resolve(new ProjectTreeItem(element));
 	}
 
-    private _onDidChangeTreeData: vscode.EventEmitter<ProjectTreeItem | undefined | null | void> = new vscode.EventEmitter<ProjectTreeItem | undefined | null | void>();
-	readonly onDidChangeTreeData: vscode.Event<ProjectTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<Project | undefined | null | void> = new vscode.EventEmitter<Project | undefined | null | void>();
+	readonly onDidChangeTreeData: vscode.Event<Project | undefined | null | void> = this._onDidChangeTreeData.event;
   
 	refresh(): void {
 	  this._onDidChangeTreeData.fire();
+	}
+
+	public async handleDrop(target: Project, source: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+		source.forEach((value) => {
+			this.projManager.addProjectByDrop(vscode.Uri.parse(value.value));
+		});
 	}
 
 }

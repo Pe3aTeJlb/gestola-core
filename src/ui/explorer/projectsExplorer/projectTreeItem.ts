@@ -1,14 +1,13 @@
+import * as vscode from 'vscode';
 import { Project } from '../../../project';
-import { AbstractTreeItem } from '../abstractTree/abstractTreeItem';
 
-export class ProjectTreeItem extends AbstractTreeItem{
+export class ProjectTreeItem extends vscode.TreeItem {
 
     constructor(public proj: Project){
         
         super(proj.projName);
         
         this.resourceUri = proj.rootUri;
-
 
         this.command = {
             title: "this.proj.projName",

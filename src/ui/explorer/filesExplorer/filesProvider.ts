@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
 import { ProjectManager } from '../../../project';
+import { FilesTreeItem } from './filesTreeItem';
 
 //#region Utilities
 
@@ -302,8 +303,6 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 				return a[1] === vscode.FileType.Directory ? -1 : 1;
 			});
 
-			
-
 			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(root.fsPath, name)), type }));
 
 		}
@@ -311,13 +310,8 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		return [];
 	}
 
-	getTreeItem(element: Entry): vscode.TreeItem {
-		const treeItem = new vscode.TreeItem(element.uri, element.type === vscode.FileType.Directory ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
-		if (element.type === vscode.FileType.File) {
-			treeItem.command = { command: 'vscode.open', title: "Open File", arguments: [element.uri], };
-			treeItem.contextValue = 'file';
-		}
-		return treeItem;
+	async getTreeItem(element: Entry): Promise<FilesTreeItem> {
+		return Promise.resolve(new FilesTreeItem(element));
 	}
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Entry | undefined | null | void> = new vscode.EventEmitter<Entry | undefined | null | void>();

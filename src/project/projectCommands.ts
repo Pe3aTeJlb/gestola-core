@@ -22,6 +22,10 @@ export class ProjectCommands{
             projManager.removeProject(proj);
         }));
 
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.set-project-favorite', (proj:Project) => {
+            projManager.setFavorite(proj);
+        }));
+
     }
 
 }

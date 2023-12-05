@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { Entry } from './filesProvider';
 import { GestolaExplorer } from './gestolaExplorer';
+import { Entry } from './filesExplorer/filesProvider';
 
 export class ExplorerCommands{
 
