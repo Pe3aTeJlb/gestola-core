@@ -5,6 +5,7 @@ import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
 import { ProjectManager } from '../../../project';
 import { FilesTreeItem } from './filesTreeItem';
+import { GestolaExplorer } from '../gestolaExplorer';
 
 //#region Utilities
 
@@ -154,19 +155,42 @@ export interface Entry {
 
 //#endregion
 
-export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscode.FileSystemProvider {
+export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vscode.TreeDragAndDropController<Entry>, vscode.FileSystemProvider {
 
 	private _onDidChangeFile: vscode.EventEmitter<vscode.FileChangeEvent[]>;
-	private bindType: string;
-    private projManager: ProjectManager;
+	private view: string;
 
-	constructor(bindType: string, projManager: ProjectManager) {
+    private projManager: ProjectManager;
+	private treeView: vscode.TreeView<Entry>;
+
+	constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer, projManager: ProjectManager, view: string) {
 
 		this._onDidChangeFile = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
-        this.bindType = bindType;
-		this.projManager = projManager;
 
+		this.projManager = projManager;
 		this.projManager.onDidChangeProject(() => this.refresh());
+
+		this.view = view;
+
+		this.treeView = vscode.window.createTreeView(
+            view, 
+            {
+                treeDataProvider: this,
+                dragAndDropController: this,
+				canSelectMany: true
+            }
+        );
+		this.treeView.onDidChangeSelection(() => {
+
+            explorer.currTree = this.treeView;
+
+            vscode.commands.executeCommand('setContext', 'gestola-core.selectionContextSingle', this.treeView.selection.length === 1);
+            vscode.commands.executeCommand('setContext', 'gestola-core.selectionContextDouble', this.treeView.selection.length === 2);
+            vscode.commands.executeCommand('setContext', 'gestola-core.selectionContextMultiple', this.treeView.selection.length > 2);
+
+        });
+		context.subscriptions.push(this.treeView);
+
 
 	}
 
@@ -287,11 +311,11 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		if(this.projManager.currProj){
 
 			let root: vscode.Uri;
-			switch (this.bindType) {
-				case "system": root = this.projManager.currProj.systemFolderUri; break;
-				case "rtl": root = this.projManager.currProj.rtlFolderUri; break;
-				case "topology": root = this.projManager.currProj.topologyFolderUri; break;
-				case "other": root = this.projManager.currProj.otherFolderUri; break;
+			switch (this.view) {
+				case "gestola-explorer-systemLvl": root = this.projManager.currProj.systemFolderUri; break;
+				case "gestola-explorer-rtlLvl": root = this.projManager.currProj.rtlFolderUri; break;
+				case "gestola-explorer-topologyLvl": root = this.projManager.currProj.topologyFolderUri; break;
+				case "gestola-explorer-otherFiles": root = this.projManager.currProj.otherFolderUri; break;
 				default: root = this.projManager.currProj.systemFolderUri; break;
 			}
 
@@ -320,5 +344,16 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 	refresh(): void {
 	  	this._onDidChangeTreeData.fire();
 	}
+
+	dropMimeTypes = ['text/uri-list', 
+					'application/vnd.code.tree.gestola-explorer-systemLvl',
+					'application/vnd.code.tree.gestola-explorer-rtlLvl',
+					'application/vnd.code.tree.gestola-explorer-topologyLvl',
+					'application/vnd.code.tree.gestola-explorer-otherFiles'];
+	dragMimeTypes = ['text/uri-list',
+					'application/vnd.code.tree.gestola-explorer-systemLvl',
+					'application/vnd.code.tree.gestola-explorer-rtlLvl',
+					'application/vnd.code.tree.gestola-explorer-topologyLvl',
+	'				application/vnd.code.tree.gestola-explorer-otherFiles'];
 
 }

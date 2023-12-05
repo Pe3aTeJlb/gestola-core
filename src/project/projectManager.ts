@@ -29,6 +29,8 @@ export class ProjectManager {
 
     constructor(context: vscode.ExtensionContext){
 
+        vscode.workspace.onDidChangeWorkspaceFolders(() => this.refreshProjectsList());
+
         this._onDidChangeProject = new vscode.EventEmitter<ProjectChangeEvent>();
         this._onDidChangeProjectList = new vscode.EventEmitter<ProjectsListChangeEvent>();
         this._onDidChangeFavoriteStatus = new vscode.EventEmitter<ProjectFavoriteStatusChangeEvent>();

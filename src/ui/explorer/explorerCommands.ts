@@ -38,14 +38,6 @@ export class ExplorerCommands{
         }));
 
 
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copy', (selEntry: Entry) => {
-            if(explorer.currTree?.selection){
-                vscode.commands.executeCommand('filesExplorer.cut', explorer.currTree.selection.map(i => i.uri));
-            } else {
-                vscode.commands.executeCommand('filesExplorer.cut', selEntry.uri);
-            }
-        }));
-
     
         context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copyFilePath', (selEntry: Entry) => {
             vscode.commands.executeCommand('copyFilePath', selEntry.uri);
@@ -55,11 +47,23 @@ export class ExplorerCommands{
             vscode.commands.executeCommand('copyRelativeFilePath', selEntry.uri);
         }));
 
+       
+
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.cut', (selEntry: Entry) => {
+            vscode.commands.executeCommand('filesExplorer.cut', selEntry.uri);
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copy', (selEntry: Entry) => {
+            vscode.commands.executeCommand('filesExplorer.copy', selEntry.uri);
+        }));
+
         context.subscriptions.push(vscode.commands.registerCommand('gestola-core.paste', (selEntry: Entry) => {
             vscode.commands.executeCommand('filesExplorer.paste', selEntry.uri);
         }));
 
-
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.rename', (selEntry: Entry) => {
+            vscode.commands.executeCommand('renameFile', selEntry.uri);
+        }));
 
         context.subscriptions.push(vscode.commands.registerCommand('gestola-core.delete', (selEntry: Entry) => {
             vscode.commands.executeCommand('moveFileToTrash', selEntry.uri);
