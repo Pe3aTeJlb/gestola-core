@@ -162,7 +162,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
     private projManager: ProjectManager;
 	private treeView: vscode.TreeView<Entry>;
-	private watcher: vscode.Disposable | undefined;
+	private watcher: vscode.FileSystemWatcher | undefined;
 
 	constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer, projManager: ProjectManager, view: string) {
 
@@ -314,7 +314,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 		if(this.projManager.currProj){
 
 			if(this.watcher){
-				//this.watcher.dispose();
+				this.watcher.dispose();
 			}
 
 			let root: vscode.Uri;
@@ -326,7 +326,13 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 				default: root = this.projManager.currProj.systemFolderUri; break;
 			}
 
-			this.watcher = this.watch(root, {recursive: true, excludes: []});
+			this.watcher = vscode.workspace.createFileSystemWatcher(
+				new vscode.RelativePattern(root, "**/*")
+			);
+
+			this.watcher.onDidChange(() => this.refresh());
+			this.watcher.onDidCreate(() => this.refresh());
+			this.watcher.onDidDelete(() => this.refresh());
 
 			const children = await this.readDirectory(root);
 			children.sort((a, b) => {
