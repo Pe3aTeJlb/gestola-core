@@ -70,6 +70,16 @@ export class ExplorerCommands{
         }));
 
 
+
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.createFile', (selEntry: Entry) => {
+            vscode.commands.executeCommand('explorer.newFile', selEntry.uri);
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.createFolder', (selEntry: Entry) => {
+            vscode.commands.executeCommand('explorer.newFolder', selEntry.uri);
+        }));
+
+
     }
 
 }

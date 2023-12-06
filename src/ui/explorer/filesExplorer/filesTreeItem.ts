@@ -12,10 +12,10 @@ export class FilesTreeItem extends vscode.TreeItem {
         );
 
         this.resourceUri = entry.uri;
+        this.contextValue = entry.type === vscode.FileType.Directory ? 'folder' : 'file';
 
 		if (entry.type === vscode.FileType.File) {
 			
-            this.contextValue = 'file';
             this.command = {
                 title: "this.proj.projName",
                 command: 'vscode.open',

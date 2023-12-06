@@ -75,11 +75,12 @@
         "command": "gestola-core.copyRelativeFilePath",
         "title": "Copy Relative Path"
       },
-      {
-        "command": "gestola-core.delete",
-        "title": "Delete"
-      },
+      
 
+      {
+        "command": "gestola-core.cut",
+        "title": "Cut"
+      },
       {
         "command": "gestola-core.copy",
         "title": "Copy"
@@ -87,6 +88,23 @@
       {
         "command": "gestola-core.paste",
         "title": "Paste"
+      },
+      {
+        "command": "gestola-core.rename",
+        "title": "Rename"
+      },
+      {
+        "command": "gestola-core.delete",
+        "title": "Delete"
+      },
+
+      {
+        "command": "gestola-core.createFile",
+        "title": "New File..."
+      },
+      {
+        "command": "gestola-core.createFolder",
+        "title": "New Folder..."
       },
 
 
@@ -135,38 +153,75 @@
         },
         
 
-
+        {
+          "command": "gestola-core.createFile",
+          "when": "view in gestola-core.explorerFileViews && viewItem == folder",
+          "group": "1_create@1"
+        },
+        {
+          "command": "gestola-core.createFolder",
+          "when": "view in gestola-core.explorerFileViews && viewItem == folder",
+          "group": "1_create@1"
+        },
         {
           "command": "gestola-core.openToSide",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "2_open@1"
         },
         {
           "command": "gestola-core.revealFileInOS",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "2_open@2"
         },
         {
           "command": "gestola-core.openWith",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "2_open@3"
         },
         {
           "command": "gestola-core.openInIntegratedTerminal",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "2_open@4"
         },
         {
           "command": "gestola-core.diff",
-          "when": "view in gestola-core.explorerFileViews && gestola-core.selectionContextDouble"
+          "when": "view in gestola-core.explorerFileViews && gestola-core.selectionContextDouble",
+          "group": "3_compare@1"
         },
         {
           "command": "gestola-core.copyFilePath",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "4_path@1"
         },
         {
           "command": "gestola-core.copyRelativeFilePath",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "4_path@2"
+        },
+        {
+          "command": "gestola-core.cut",
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "5_copy@1"
+        },
+        {
+          "command": "gestola-core.copy",
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "5_copy@2"
+        },
+        {
+          "command": "gestola-core.paste",
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "5_copy@3"
+        },
+        {
+          "command": "gestola-core.rename",
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "5_copy@4"
         },
         {
           "command": "gestola-core.delete",
-          "when": "view in gestola-core.explorerFileViews"
+          "when": "view in gestola-core.explorerFileViews",
+          "group": "5_copy@5"
         }
         
 

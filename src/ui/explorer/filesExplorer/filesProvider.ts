@@ -162,6 +162,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
     private projManager: ProjectManager;
 	private treeView: vscode.TreeView<Entry>;
+	private watcher: vscode.Disposable | undefined;
 
 	constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer, projManager: ProjectManager, view: string) {
 
@@ -169,8 +170,10 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
 		this.projManager = projManager;
 		this.projManager.onDidChangeProject(() => this.refresh());
+		this.onDidChangeFile(() => this.refresh);
 
 		this.view = view;
+		this.watcher = undefined;
 
 		this.treeView = vscode.window.createTreeView(
             view, 
@@ -310,6 +313,10 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
 		if(this.projManager.currProj){
 
+			if(this.watcher){
+				//this.watcher.dispose();
+			}
+
 			let root: vscode.Uri;
 			switch (this.view) {
 				case "gestola-explorer-systemLvl": root = this.projManager.currProj.systemFolderUri; break;
@@ -318,6 +325,8 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 				case "gestola-explorer-otherFiles": root = this.projManager.currProj.otherFolderUri; break;
 				default: root = this.projManager.currProj.systemFolderUri; break;
 			}
+
+			this.watcher = this.watch(root, {recursive: true, excludes: []});
 
 			const children = await this.readDirectory(root);
 			children.sort((a, b) => {
