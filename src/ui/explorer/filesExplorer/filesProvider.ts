@@ -6,6 +6,8 @@ import * as rimraf from 'rimraf';
 import { ProjectManager } from '../../../project';
 import { FilesTreeItem } from './filesTreeItem';
 import { GestolaExplorer } from '../gestolaExplorer';
+import * as fse from 'fs-extra';
+
 
 //#region Utilities
 
@@ -369,6 +371,37 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 					'application/vnd.code.tree.gestola-explorer-systemLvl',
 					'application/vnd.code.tree.gestola-explorer-rtlLvl',
 					'application/vnd.code.tree.gestola-explorer-topologyLvl',
-	'				application/vnd.code.tree.gestola-explorer-otherFiles'];
+					'application/vnd.code.tree.gestola-explorer-otherFiles'];
+
+	public async handleDrop(target: Entry, source: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+		source.forEach((value) => {
+			this.projManager.addProjectByDrop(vscode.Uri.parse(value.value));
+			fse.move();
+		});
+	}
+
+
+	public async handleDrop(target: Node | undefined, sources: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+		const transferItem = sources.get('application/vnd.code.tree.testViewDragAndDrop');
+		if (!transferItem) {
+			return;
+		}
+		const treeItems: Node[] = transferItem.value;
+		let roots = this._getLocalRoots(treeItems);
+		// Remove nodes that are already target's parent nodes
+		roots = roots.filter(r => !this._isChild(this._getTreeElement(r.key), target));
+		if (roots.length > 0) {
+			// Reload parents of the moving elements
+			const parents = roots.map(r => this.getParent(r));
+			roots.forEach(r => this._reparentNode(r, target));
+			this._onDidChangeTreeData.fire([...parents, target]);
+		}
+	}
+
+	public async handleDrag(source: Node[], treeDataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+		treeDataTransfer.set('application/vnd.code.tree.testViewDragAndDrop', new vscode.DataTransferItem(source));
+	}
+
+
 
 }
