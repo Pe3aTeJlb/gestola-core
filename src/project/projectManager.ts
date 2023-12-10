@@ -137,7 +137,7 @@ export class ProjectManager {
         vscode.workspace.updateWorkspaceFolders(
             vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
             0,
-            { uri: uri, name: uri.fsPath.split(path.sep)[-1] }
+            { uri: uri, name: path.basename(uri.fsPath) }
         );
         this.refreshProjectsList();
 

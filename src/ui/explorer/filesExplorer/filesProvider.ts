@@ -7,6 +7,8 @@ import { ProjectManager } from '../../../project';
 import { FilesTreeItem } from './filesTreeItem';
 import { GestolaExplorer } from '../gestolaExplorer';
 import * as fse from 'fs-extra';
+import { type } from 'os';
+import G = require('glob');
 
 
 //#region Utilities
@@ -155,12 +157,16 @@ export interface Entry {
 	type: vscode.FileType;
 }
 
+type Node = { 	uri: vscode.Uri;
+				type: vscode.FileType; };
+
 //#endregion
 
 export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vscode.TreeDragAndDropController<Entry>, vscode.FileSystemProvider {
 
 	private _onDidChangeFile: vscode.EventEmitter<vscode.FileChangeEvent[]>;
 	private view: string;
+	private root: vscode.Uri | undefined;
 
     private projManager: ProjectManager;
 	private treeView: vscode.TreeView<Entry>;
@@ -319,24 +325,25 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 				this.watcher.dispose();
 			}
 
-			let root: vscode.Uri;
+			let rt: vscode.Uri;
 			switch (this.view) {
-				case "gestola-explorer-systemLvl": root = this.projManager.currProj.systemFolderUri; break;
-				case "gestola-explorer-rtlLvl": root = this.projManager.currProj.rtlFolderUri; break;
-				case "gestola-explorer-topologyLvl": root = this.projManager.currProj.topologyFolderUri; break;
-				case "gestola-explorer-otherFiles": root = this.projManager.currProj.otherFolderUri; break;
-				default: root = this.projManager.currProj.systemFolderUri; break;
+				case "gestola-explorer-systemLvl": rt = this.projManager.currProj.systemFolderUri; break;
+				case "gestola-explorer-rtlLvl": rt = this.projManager.currProj.rtlFolderUri; break;
+				case "gestola-explorer-topologyLvl": rt = this.projManager.currProj.topologyFolderUri; break;
+				case "gestola-explorer-otherFiles": rt = this.projManager.currProj.otherFolderUri; break;
+				default: rt = this.projManager.currProj.systemFolderUri; break;
 			}
+			this.root = rt;
 
 			this.watcher = vscode.workspace.createFileSystemWatcher(
-				new vscode.RelativePattern(root, "**/*")
+				new vscode.RelativePattern(this.root, "**/*")
 			);
 
 			this.watcher.onDidChange(() => this.refresh());
 			this.watcher.onDidCreate(() => this.refresh());
 			this.watcher.onDidDelete(() => this.refresh());
 
-			const children = await this.readDirectory(root);
+			const children = await this.readDirectory(rt);
 			children.sort((a, b) => {
 				if (a[1] === b[1]) {
 					return a[0].localeCompare(b[0]);
@@ -344,7 +351,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 				return a[1] === vscode.FileType.Directory ? -1 : 1;
 			});
 
-			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(root.fsPath, name)), type }));
+			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(rt.fsPath, name)), type }));
 
 		}
 
@@ -362,46 +369,60 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 	  	this._onDidChangeTreeData.fire();
 	}
 
-	dropMimeTypes = ['text/uri-list', 
-					'application/vnd.code.tree.gestola-explorer-systemLvl',
-					'application/vnd.code.tree.gestola-explorer-rtlLvl',
-					'application/vnd.code.tree.gestola-explorer-topologyLvl',
-					'application/vnd.code.tree.gestola-explorer-otherFiles'];
-	dragMimeTypes = ['text/uri-list',
-					'application/vnd.code.tree.gestola-explorer-systemLvl',
-					'application/vnd.code.tree.gestola-explorer-rtlLvl',
-					'application/vnd.code.tree.gestola-explorer-topologyLvl',
-					'application/vnd.code.tree.gestola-explorer-otherFiles'];
+	dropMimeTypes = ['text/uri-list', 'explorer/treeitem'];
+	dragMimeTypes = ['explorer/treeitem'];
+
+	
 
 	public async handleDrop(target: Entry, source: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
-		source.forEach((value) => {
-			this.projManager.addProjectByDrop(vscode.Uri.parse(value.value));
-			fse.move();
-		});
-	}
 
+		if (source.get('explorer/treeitem')) {
 
-	public async handleDrop(target: Node | undefined, sources: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
-		const transferItem = sources.get('application/vnd.code.tree.testViewDragAndDrop');
-		if (!transferItem) {
-			return;
+			const entries: string[] = (source.get('explorer/treeitem')?.value as string).replace("[", "").replace("]", "").replace(/"/g, "").split(",");
+
+			entries.forEach((l) => {
+
+				let el = vscode.Uri.file(l);
+
+				if(target){	
+					target.type === vscode.FileType.Directory
+					? fse.move(el.fsPath, path.join(target.uri.fsPath, path.basename(el.fsPath)))
+					: fse.move(el.fsPath, path.join(path.dirname(target.uri.fsPath), path.basename(el.fsPath)));
+				} else {
+					if(this.root){
+						fse.move(el.fsPath, path.join(this.root.fsPath, path.basename(el.fsPath)));
+					}
+				}
+
+			});
+			
+		} else {
+
+			let list: string = source.get('text/uri-list')?.value;
+			let entries: string[] = list.split("\r\n");
+	
+			entries.forEach((l) => {
+	
+				let el = vscode.Uri.parse(l);
+
+				if(target){
+					target.type === vscode.FileType.Directory
+					? fse.copy(el.fsPath, path.join(target.uri.fsPath, path.basename(el.fsPath)))
+					: fse.copy(el.fsPath, path.join(path.dirname(target.uri.fsPath), path.basename(el.fsPath)));
+				} else {
+					if(this.root) {
+						fse.copy(el.fsPath, path.join(this.root.fsPath, path.basename(el.fsPath)));
+					}
+				}
+
+			});
+
 		}
-		const treeItems: Node[] = transferItem.value;
-		let roots = this._getLocalRoots(treeItems);
-		// Remove nodes that are already target's parent nodes
-		roots = roots.filter(r => !this._isChild(this._getTreeElement(r.key), target));
-		if (roots.length > 0) {
-			// Reload parents of the moving elements
-			const parents = roots.map(r => this.getParent(r));
-			roots.forEach(r => this._reparentNode(r, target));
-			this._onDidChangeTreeData.fire([...parents, target]);
-		}
+
 	}
 
-	public async handleDrag(source: Node[], treeDataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
-		treeDataTransfer.set('application/vnd.code.tree.testViewDragAndDrop', new vscode.DataTransferItem(source));
+	public async handleDrag(source: Entry[], treeDataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
+		treeDataTransfer.set('explorer/treeitem', new vscode.DataTransferItem(source.map(i => i.uri.fsPath)));
 	}
-
-
 
 }
