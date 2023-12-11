@@ -1,5 +1,5 @@
-import * as core from "../core";
-import { GestolaExplorer } from "./explorer/gestolaExplorer";
+import * as core from "../Core";
+import { GestolaExplorer } from "./explorer/GestolaExplorer";
 
 export class UIController{
 

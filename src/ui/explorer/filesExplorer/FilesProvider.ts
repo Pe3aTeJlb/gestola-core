@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
 import { ProjectManager } from '../../../project';
-import { FilesTreeItem } from './filesTreeItem';
-import { GestolaExplorer } from '../gestolaExplorer';
+import { FilesTreeItem } from './FilesTreeItem';
+import { GestolaExplorer } from '../GestolaExplorer';
 import * as fse from 'fs-extra';
 import { type } from 'os';
 import G = require('glob');
@@ -371,8 +371,6 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
 	dropMimeTypes = ['text/uri-list', 'explorer/treeitem'];
 	dragMimeTypes = ['explorer/treeitem'];
-
-	
 
 	public async handleDrop(target: Entry, source: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
 

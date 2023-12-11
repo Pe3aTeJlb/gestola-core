@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Core } from './core';
+import { Core } from './Core';
 
 let core : Core;
 

@@ -1,2 +1,2 @@
-export * from "./arrayUtils";
-export * from "./fsUtils";
+export * from "./ArrayUtils";
+export * from "./FSUtils";

@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import * as utils from '../utils';
-import { defProjStruct, Project } from './project';
-import { ProjectCommands } from './projectCommands';
+import { defProjStruct, Project } from './Project';
+import { ProjectCommands } from './ProjectCommands';
 import * as path from 'path';
+import { ActionsRunner } from '../ActionsRunner';
 
 export interface ProjectChangeEvent {
     readonly proj: Project;
@@ -27,7 +28,7 @@ export class ProjectManager {
     private _onDidChangeProjectList: vscode.EventEmitter<ProjectsListChangeEvent>;
     private _onDidChangeFavoriteStatus: vscode.EventEmitter<ProjectFavoriteStatusChangeEvent>;
 
-    constructor(context: vscode.ExtensionContext){
+    constructor(context: vscode.ExtensionContext, actRunner: ActionsRunner){
 
         vscode.workspace.onDidChangeWorkspaceFolders(() => this.refreshProjectsList());
 

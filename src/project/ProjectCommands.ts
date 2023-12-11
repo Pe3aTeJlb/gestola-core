@@ -1,10 +1,17 @@
 import * as vscode from 'vscode';
-import { ProjectManager } from "./projectManager";
-import { Project } from './project';
+import { ProjectManager } from "./ProjectManager";
+import { Project } from './Project';
 
 export class ProjectCommands{
 
     constructor(context: vscode.ExtensionContext, projManager: ProjectManager){
+
+        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.create-project', () => {
+            new CreateProjectAction();
+        }));
+
+
+
 
         context.subscriptions.push(vscode.commands.registerCommand('gestola-core.create-project', () => {
             projManager.createProject();

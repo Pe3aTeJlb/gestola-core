@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Project, ProjectManager } from '../../../project';
-import { ProjectTreeItem } from './projectTreeItem';
+import { ProjectTreeItem } from './ProjectTreeItem';
 
 export class ProjectsProvider implements vscode.TreeDataProvider<Project>, vscode.TreeDragAndDropController<Project> {
 

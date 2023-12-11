@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Project } from '../../../project';
-import { Entry } from './filesProvider';
+import { Entry } from './FilesProvider';
 
 export class FilesTreeItem extends vscode.TreeItem {
 
