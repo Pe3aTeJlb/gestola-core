@@ -1,18 +1,19 @@
 import { Action } from "../actions/Action";
 import { Project, ProjectManager } from "../project";
-import { BaseAction } from "./BaseCommand";
+import { BaseCommand } from "./BaseCommand";
 
-export abstract class ProjectActionCommand {
+export abstract class ProjectActionCommand extends BaseCommand{
 
-    constructor(title: string, projManager: ProjectManager){
+    constructor(title: string){
+        super(title);
     }
 
-    public async getActionBase(projects: Project[]): Promise<Action[]> {
+    public override async getActionBase(projects: Project[]): Promise<Action[]> {
         return this.shouldRun(projects) ? this.getActions(projects) : [];
     }
 
-    public abstract shouldRun(projects: Project[] | undefined): boolean;
+    public abstract override shouldRun(projects? : Project[]): boolean;
 
-    public abstract getActions(projects: Project[] | undefined): Promise<Action[]>;
+    public abstract override getActions(projects? : Project[]): Promise<Action[]>;
 
 }

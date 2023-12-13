@@ -4,6 +4,7 @@ import { UIController }     from "./ui";
 import { EventAggregator } from './event/EventAggregator';
 import { Logger } from './log/Logger';
 import { ActionsRunner } from './ActionsRunner';
+import { ProjectCommands } from './project/ProjectCommands';
 
 export class Core {
 
@@ -20,7 +21,9 @@ export class Core {
         const logger = new Logger(eventAggregator);
         const actionsRunner = new ActionsRunner(logger);
 
-        this.projManager = new ProjectManager(context, actionsRunner);
+        this.projManager = new ProjectManager();
+        new ProjectCommands(context, this.projManager, actionsRunner);
+
         this.uiController = new UIController(this);
 
         context.subscriptions.push(

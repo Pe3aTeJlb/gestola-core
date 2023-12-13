@@ -1,12 +1,12 @@
 import { Action } from "../actions/Action";
-import { CreateProjectAction } from "../actions/CreateProjectAction";
+import { OpenProjectAction } from "../actions/OpenProjectAction";
 import { Project, ProjectManager } from "../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
-export class CreateProjectCommand extends ProjectActionCommand {
+export class OpenProjectCommand extends ProjectActionCommand {
 
     constructor(private readonly projManager : ProjectManager){
-        super('Create Project');
+        super('Open Project');
     }
 
     public shouldRun(projects: Project[] | undefined): boolean {
@@ -14,7 +14,7 @@ export class CreateProjectCommand extends ProjectActionCommand {
     }
 
     public async getActions(projects: Project[] | undefined): Promise<Action[]> {
-        return [new CreateProjectAction(this.projManager)];
+        return [new OpenProjectAction(this.projManager)];
     }
-   
+
 }

@@ -1,20 +1,21 @@
 import { Action } from "../actions/Action";
-import { CreateProjectAction } from "../actions/CreateProjectAction";
+import { SetProjectAction } from "../actions/SetProjectAction";
+import { SetProjectFavoriteAction } from "../actions/SetProjectFavoriteAction";
 import { Project, ProjectManager } from "../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
-export class CreateProjectCommand extends ProjectActionCommand {
+export class SetProjectFavoriteCommand extends ProjectActionCommand {
 
     constructor(private readonly projManager : ProjectManager){
-        super('Create Project');
+        super('Set Project Favorite');
     }
 
     public shouldRun(projects: Project[] | undefined): boolean {
-        return true;
+        return !!projects && projects.length > 0;
     }
 
     public async getActions(projects: Project[] | undefined): Promise<Action[]> {
-        return [new CreateProjectAction(this.projManager)];
+        return [new SetProjectFavoriteAction(this.projManager, projects)];
     }
-   
+
 }

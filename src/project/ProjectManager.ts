@@ -3,7 +3,6 @@ import * as utils from '../utils';
 import { defProjStruct, Project } from './Project';
 import { ProjectCommands } from './ProjectCommands';
 import * as path from 'path';
-import { ActionsRunner } from '../ActionsRunner';
 
 export interface ProjectChangeEvent {
     readonly proj: Project;
@@ -28,7 +27,7 @@ export class ProjectManager {
     private _onDidChangeProjectList: vscode.EventEmitter<ProjectsListChangeEvent>;
     private _onDidChangeFavoriteStatus: vscode.EventEmitter<ProjectFavoriteStatusChangeEvent>;
 
-    constructor(context: vscode.ExtensionContext, actRunner: ActionsRunner){
+    constructor(){
 
         vscode.workspace.onDidChangeWorkspaceFolders(() => this.refreshProjectsList());
 
@@ -43,8 +42,6 @@ export class ProjectManager {
         this.openedProjects.length > 0 
         ? this.currProj = this.openedProjects[0]
         : this.currProj = undefined;
-
-        new ProjectCommands(context, this);
 
     }
     
@@ -63,7 +60,7 @@ export class ProjectManager {
             if (fileUri && fileUri[0]) {
                 if(utils.FSProvider.isDirEmpty(fileUri[0].fsPath)){
                     utils.FSProvider.createDirStructure(fileUri[0].fsPath, defProjStruct);
-                    this.addProject(fileUri[0]);
+                    this.addProject([fileUri[0]]);
                 } else {
                     vscode.commands.executeCommand("gestola-core.test-msg","Selected directory is not empty");
                 }
@@ -94,7 +91,7 @@ export class ProjectManager {
                             this.setProject(this.openedProjects.filter(i => i.rootUri === fileUri[0])[0]);
                         } else {
                             vscode.commands.executeCommand("gestola-core.test-msg","is Gestola project");
-                            this.addProject(fileUri[0]);
+                            this.addProject([fileUri[0]]);
                         }
                     } else {
                         vscode.commands.executeCommand("gestola-core.test-msg", "Selected directory is not a Gestola project");
@@ -126,20 +123,22 @@ export class ProjectManager {
         }
 
         if(this.checkForGestolaProject(uri.fsPath)){
-            this.addProject(uri);
+            this.addProject([uri]);
         } else {
             vscode.commands.executeCommand("gestola-core.test-msg", "Selected directory is not a Gestola project");
         }
 
     }
 
-    addProject(uri: vscode.Uri){
+    addProject(uri: vscode.Uri[]){
 
-        vscode.workspace.updateWorkspaceFolders(
-            vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
-            0,
-            { uri: uri, name: path.basename(uri.fsPath) }
-        );
+        uri.forEach(i => {
+            vscode.workspace.updateWorkspaceFolders(
+                vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+                0,
+                { uri: i, name: path.basename(i.fsPath) }
+            );
+        });
         this.refreshProjectsList();
 
         //If project is only folder in workspace
@@ -149,14 +148,16 @@ export class ProjectManager {
 
     }
 
-    removeProject(proj: Project){
-        let toDelete = vscode.workspace.getWorkspaceFolder(proj.rootUri);
-        if(vscode.workspace.workspaceFolders && toDelete){
-            vscode.workspace.updateWorkspaceFolders(
-                vscode.workspace.workspaceFolders.indexOf(toDelete),
-                1
-            );
-        }
+    removeProject(proj: Project[]){
+        proj.forEach(p => {
+            let toDelete = vscode.workspace.getWorkspaceFolder(p.rootUri);
+            if(vscode.workspace.workspaceFolders && toDelete){
+                vscode.workspace.updateWorkspaceFolders(
+                    vscode.workspace.workspaceFolders.indexOf(toDelete),
+                    1
+                );
+            }
+        });
         this.refreshProjectsList();
     }   
 

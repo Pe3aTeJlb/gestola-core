@@ -1,20 +1,21 @@
 import { Action } from "../actions/Action";
-import { CreateProjectAction } from "../actions/CreateProjectAction";
+import { RemoveProjectAction } from "../actions/RemoveProjectAction";
+import { SetProjectAction } from "../actions/SetProjectAction";
 import { Project, ProjectManager } from "../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
-export class CreateProjectCommand extends ProjectActionCommand {
+export class RemoveProjectCommand extends ProjectActionCommand {
 
     constructor(private readonly projManager : ProjectManager){
-        super('Create Project');
+        super('Remove Project');
     }
 
     public shouldRun(projects: Project[] | undefined): boolean {
-        return true;
+        return !!projects && projects.length > 0;
     }
 
     public async getActions(projects: Project[] | undefined): Promise<Action[]> {
-        return [new CreateProjectAction(this.projManager)];
+        return [new RemoveProjectAction(this.projManager, projects)];
     }
-   
+
 }
