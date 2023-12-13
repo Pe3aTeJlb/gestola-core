@@ -1,10 +1,27 @@
 import * as vscode from 'vscode';
 import { GestolaExplorer } from './GestolaExplorer';
 import { Entry } from './filesExplorer/FilesProvider';
+import { FilesActionCommand } from '../../commands/FilesActionCommands';
+import { ActionsRunner } from '../../ActionsRunner';
 
 export class ExplorerCommands{
 
-    constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer){
+    private commands: Map<string, FilesActionCommand>;
+
+    constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer, actionsRunner: ActionsRunner){
+
+        this.commands = new Map();
+
+        this.commands.set("gestola-core.create-project", new CreateProjectCommand(projManager));
+
+        for (let [key, command] of this.commands) {
+            context.subscriptions.push(vscode.commands.registerCommand(key, async (...args) => {
+                const actions = await command.getActionBase(args);
+                if(actions.length > 0){
+                    await actionsRunner.run(actions, {isCancellationRequested: false});
+                }
+            }));
+        }
 
 
         context.subscriptions.push(vscode.commands.registerCommand('gestola-core.openToSide', (selEntry: Entry) => {

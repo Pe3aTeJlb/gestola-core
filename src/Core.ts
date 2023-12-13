@@ -12,6 +12,7 @@ export class Core {
 
     projManager: ProjectManager;
     uiController: UIController;
+    actionsRunner: ActionsRunner;
 
     constructor(context: vscode.ExtensionContext){
 
@@ -19,10 +20,10 @@ export class Core {
 
         const eventAggregator = new EventAggregator();
         const logger = new Logger(eventAggregator);
-        const actionsRunner = new ActionsRunner(logger);
+        this.actionsRunner = new ActionsRunner(logger);
 
         this.projManager = new ProjectManager();
-        new ProjectCommands(context, this.projManager, actionsRunner);
+        new ProjectCommands(context, this.projManager, this.actionsRunner);
 
         this.uiController = new UIController(this);
 

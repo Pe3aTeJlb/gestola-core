@@ -1,6 +1,6 @@
-import { Action } from "../actions/Action";
-import { SetProjectAction } from "../actions/SetProjectAction";
-import { Project, ProjectManager } from "../project";
+import { Action } from "../../actions/Action";
+import { SetProjectAction } from "../../actions/projActions/SetProjectAction";
+import { Project, ProjectManager } from "../../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
 export class SetProjectCommand extends ProjectActionCommand {

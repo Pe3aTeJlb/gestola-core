@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import { Entry, FileSystemProvider } from "./filesExplorer/FilesProvider";
 import { ProjectManager } from "../../project";
 import { ProjectsProvider } from "./projectsExplorer/ProjectsProvider";
-import { ExplorerCommands } from "./ExplorerCommands";
 import { TreeFileDecorationProvider } from "./TreeFileDecoratorProvider";
 
 export class GestolaExplorer{
@@ -33,8 +32,6 @@ export class GestolaExplorer{
                 new TreeFileDecorationProvider(projManager)
             )
         );
-        
-        new ExplorerCommands(context, this);
 
     }
 

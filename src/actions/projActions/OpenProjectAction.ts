@@ -1,7 +1,7 @@
-import { ProjectManager } from "../project";
-import { Action, ActionContext } from "./Action";
+import { ProjectManager } from "../../project";
+import { Action, ActionContext } from "../Action";
 
-export class CreateProjectAction implements Action {
+export class OpenProjectAction implements Action {
 
     canRevert: boolean;
 
@@ -11,13 +11,13 @@ export class CreateProjectAction implements Action {
 
     public execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
-            this.projManager.createProject();
+            this.projManager.openProject();
         }
         return Promise.resolve();
     }
 
     toString(): string {
-        return 'Create Gestola project';
+        return 'Open Gestola project';
     }
 
 }

@@ -1,5 +1,5 @@
-import { Project, ProjectManager } from "../project";
-import { Action, ActionContext } from "./Action";
+import { Project, ProjectManager } from "../../project";
+import { Action, ActionContext } from "../Action";
 
 export class SetProjectFavoriteAction implements Action {
 

@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
 import { ProjectManager } from "./ProjectManager";
-import { Project } from './Project';
 import { ActionsRunner } from '../ActionsRunner';
-import { CreateProjectCommand } from '../commands/CreateProjectCommand';
-import { ProjectActionCommand } from '../commands/ProjectActionCommand';
-import { OpenProjectCommand } from '../commands/OpenProjectCommand';
-import { SetProjectCommand } from '../commands/SetProjectCommand';
-import { RemoveProjectCommand } from '../commands/RemoveProjectCommand';
-import { SetProjectFavoriteCommand } from '../commands/SetProjectFavoriteCommand';
+import { CreateProjectCommand } from '../commands/projCommands/CreateProjectCommand';
+import { ProjectActionCommand } from '../commands/projCommands/ProjectActionCommand';
+import { OpenProjectCommand } from '../commands/projCommands/OpenProjectCommand';
+import { SetProjectCommand } from '../commands/projCommands/SetProjectCommand';
+import { RemoveProjectCommand } from '../commands/projCommands/RemoveProjectCommand';
+import { SetProjectFavoriteCommand } from '../commands/projCommands/SetProjectFavoriteCommand';
 
 export class ProjectCommands{
 

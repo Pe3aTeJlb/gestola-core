@@ -1,6 +1,6 @@
-import { Action } from "../actions/Action";
-import { OpenProjectAction } from "../actions/OpenProjectAction";
-import { Project, ProjectManager } from "../project";
+import { Action } from "../../actions/Action";
+import { OpenProjectAction } from "../../actions/projActions/OpenProjectAction";
+import { Project, ProjectManager } from "../../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
 export class OpenProjectCommand extends ProjectActionCommand {

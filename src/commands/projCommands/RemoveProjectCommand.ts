@@ -1,7 +1,7 @@
-import { Action } from "../actions/Action";
-import { RemoveProjectAction } from "../actions/RemoveProjectAction";
-import { SetProjectAction } from "../actions/SetProjectAction";
-import { Project, ProjectManager } from "../project";
+import { Action } from "../../actions/Action";
+import { RemoveProjectAction } from "../../actions/projActions/RemoveProjectAction";
+import { SetProjectAction } from "../../actions/projActions/SetProjectAction";
+import { Project, ProjectManager } from "../../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
 export class RemoveProjectCommand extends ProjectActionCommand {

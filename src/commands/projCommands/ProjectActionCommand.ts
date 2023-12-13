@@ -1,8 +1,8 @@
-import { Action } from "../actions/Action";
-import { Project, ProjectManager } from "../project";
-import { BaseCommand } from "./BaseCommand";
+import { Action } from "../../actions/Action";
+import { Project, ProjectManager } from "../../project";
+import { BaseCommand } from "../BaseCommand";
 
-export abstract class ProjectActionCommand extends BaseCommand{
+export abstract class ProjectActionCommand extends BaseCommand {
 
     constructor(title: string){
         super(title);

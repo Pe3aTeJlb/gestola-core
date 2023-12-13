@@ -1,7 +1,7 @@
-import { Action } from "../actions/Action";
-import { SetProjectAction } from "../actions/SetProjectAction";
-import { SetProjectFavoriteAction } from "../actions/SetProjectFavoriteAction";
-import { Project, ProjectManager } from "../project";
+import { Action } from "../../actions/Action";
+import { SetProjectAction } from "../../actions/projActions/SetProjectAction";
+import { SetProjectFavoriteAction } from "../../actions/projActions/SetProjectFavoriteAction";
+import { Project, ProjectManager } from "../../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
 export class SetProjectFavoriteCommand extends ProjectActionCommand {
