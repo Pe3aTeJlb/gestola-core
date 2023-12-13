@@ -1,4 +1,4 @@
-import { Action, ActionContext } from "./actions/action";
+import { Action, ActionContext } from "./actions/Action";
 import { ILogger } from "./log/ILogger";
 
 export class ActionsRunner {

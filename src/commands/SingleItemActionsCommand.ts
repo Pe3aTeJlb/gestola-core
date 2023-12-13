@@ -1,8 +1,5 @@
-import { TreeItem } from "@tree";
-import { Action } from "@actions";
-import { ActionsCommand } from "./ActionsCommand";
-
 export abstract class SingleItemActionsCommand extends ActionsCommand {
+
     constructor(title: string) {
         super(title);
     }
@@ -15,4 +12,5 @@ export abstract class SingleItemActionsCommand extends ActionsCommand {
     public abstract shouldRun(item: TreeItem | undefined): boolean;
 
     public abstract getActions(item: TreeItem | undefined): Promise<Action[]>;
+
 }
