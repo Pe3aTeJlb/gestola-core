@@ -2,7 +2,7 @@ import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { Action, ActionContext } from "../Action";
 import * as vscode from 'vscode';
 
-export class CopyFIleAction implements Action {
+export class CopyFileAction implements Action {
 
     canRevert: boolean;
 
