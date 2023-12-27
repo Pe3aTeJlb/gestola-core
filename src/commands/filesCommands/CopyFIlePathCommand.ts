@@ -1,12 +1,12 @@
 import { Action } from "../../actions/Action";
-import { OpenToSideAction } from "../../actions/filesAction/OpenToSideAction";
+import { CopyFilePathAction } from "../../actions/filesAction/CopyFilePathAction";
 import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { FilesActionCommand } from "./FilesActionCommands";
 
-export class OpenToSideCommand extends FilesActionCommand {
+export class CopyFilePathCommand extends FilesActionCommand {
 
     constructor(){
-        super('Open to the Side Command');
+        super('Copy File Path Command');
     }
 
     public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
@@ -14,7 +14,7 @@ export class OpenToSideCommand extends FilesActionCommand {
     }
 
     public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {
-        return [new OpenToSideAction(item, selectedItems)];
+        return [new CopyFilePathAction(item, selectedItems)];
     }
    
 }

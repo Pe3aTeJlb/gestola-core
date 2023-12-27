@@ -2,23 +2,25 @@ import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { Action, ActionContext } from "../Action";
 import * as vscode from 'vscode';
 
-export class OpenToSideAction implements Action {
+export class RevealFileInOSAction implements Action {
 
     canRevert: boolean;
 
-    constructor(readonly item: Entry, selectedItems: readonly Entry[]){
+    constructor(readonly item: Entry, readonly selectedItems: readonly Entry[]){
         this.canRevert = false;
     }
 
     public execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
-            vscode.commands.executeCommand('explorer.openToSide', this.item.uri);
+            for(let i = 0; i < this.selectedItems.length; i++){
+                vscode.commands.executeCommand('revealFileInOS', this.selectedItems[i].uri);    
+            }
         }
         return Promise.resolve();
     }
 
     toString(): string {
-        return 'Open to the side ' + this.item.uri.fsPath;
+        return 'Reveal File in OS ' + this.item.uri.fsPath;
     }
 
 }

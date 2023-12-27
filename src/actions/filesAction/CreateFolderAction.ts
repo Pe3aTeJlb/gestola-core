@@ -2,7 +2,7 @@ import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { Action, ActionContext } from "../Action";
 import * as vscode from 'vscode';
 
-export class OpenToSideAction implements Action {
+export class CreateFolderAction implements Action {
 
     canRevert: boolean;
 
@@ -18,7 +18,7 @@ export class OpenToSideAction implements Action {
     }
 
     toString(): string {
-        return 'Open to the side ' + this.item.uri.fsPath;
+        return 'Create Fodler' + this.item.uri.fsPath;
     }
 
 }

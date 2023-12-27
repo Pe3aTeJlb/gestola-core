@@ -1,12 +1,12 @@
 import { Action } from "../../actions/Action";
-import { OpenToSideAction } from "../../actions/filesAction/OpenToSideAction";
+import { DeleteFileAction } from "../../actions/filesAction/DeleteFIleAction";
 import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { FilesActionCommand } from "./FilesActionCommands";
 
-export class OpenToSideCommand extends FilesActionCommand {
+export class DeleteFileCommand extends FilesActionCommand {
 
     constructor(){
-        super('Open to the Side Command');
+        super('Delete File Command');
     }
 
     public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
@@ -14,7 +14,7 @@ export class OpenToSideCommand extends FilesActionCommand {
     }
 
     public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {
-        return [new OpenToSideAction(item, selectedItems)];
+        return [new DeleteFileAction(item, selectedItems)];
     }
    
 }

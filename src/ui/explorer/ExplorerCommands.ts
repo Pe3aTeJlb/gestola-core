@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { GestolaExplorer } from './GestolaExplorer';
-import { Entry } from './filesExplorer/FilesProvider';
-import { FilesActionCommand } from '../../commands/FilesActionCommands';
+import { FilesActionCommand } from '../../commands/filesCommands/FilesActionCommands';
 import { ActionsRunner } from '../../ActionsRunner';
+import { OpenToSideCommand } from '../../commands/filesCommands/OpenToSideCommand';
 
 export class ExplorerCommands{
 
@@ -12,90 +12,35 @@ export class ExplorerCommands{
 
         this.commands = new Map();
 
-        this.commands.set("gestola-core.create-project", new CreateProjectCommand(projManager));
+        this.commands.set("gestola-core.openToSide", new OpenToSideCommand());
+        this.commands.set("gestola-core.revealFileInOS", new OpenToSideCommand());
+        this.commands.set("gestola-core.openWith", new OpenToSideCommand());
+        this.commands.set("gestola-core.openInIntegratedTerminal", new OpenToSideCommand());
+        this.commands.set("gestola-core.diff", new OpenToSideCommand());
+
+        this.commands.set("gestola-core.copyFilePath", new OpenToSideCommand());
+        this.commands.set("gestola-core.copyRelativeFilePath", new OpenToSideCommand());
+
+        this.commands.set("gestola-core.cut", new OpenToSideCommand());
+        this.commands.set("gestola-core.copy", new OpenToSideCommand());
+        this.commands.set("gestola-core.paste", new OpenToSideCommand());
+        this.commands.set("gestola-core.rename", new OpenToSideCommand());
+        this.commands.set("gestola-core.delete", new OpenToSideCommand());
+
+        this.commands.set("gestola-core.createFile", new OpenToSideCommand());
+        this.commands.set("gestola-core.createFlder", new OpenToSideCommand());
+
+        this.commands.set("gestola-core.moveFile", new OpenToSideCommand());
+        
 
         for (let [key, command] of this.commands) {
             context.subscriptions.push(vscode.commands.registerCommand(key, async (...args) => {
-                const actions = await command.getActionBase(args);
+                const actions = await command.getActionBase(args[0], args[1]);
                 if(actions.length > 0){
                     await actionsRunner.run(actions, {isCancellationRequested: false});
                 }
             }));
         }
-
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.openToSide', (selEntry: Entry) => {
-            vscode.commands.executeCommand('explorer.openToSide', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.revealFileInOS', (selEntry: Entry) => {
-
-            if(explorer.currTree?.selection){
-                for(let i = 0; i < explorer.currTree.selection.length; i++){
-                    vscode.commands.executeCommand('revealFileInOS', explorer.currTree.selection[i].uri);    
-                }
-            } else {
-                vscode.commands.executeCommand('revealFileInOS', selEntry.uri);
-            }
-
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.openWith', (selEntry: Entry) => {
-            vscode.commands.executeCommand('explorer.openWith', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.openInIntegratedTerminal', (selEntry: Entry) => {
-            vscode.commands.executeCommand('explorer.openWith', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.diff', (selEntry: Entry) => {
-            if(explorer.currTree?.selection){
-                vscode.commands.executeCommand('vscode.diff', explorer.currTree.selection[0].uri, explorer.currTree.selection[1].uri);
-            }
-        }));
-
-
-    
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copyFilePath', (selEntry: Entry) => {
-            vscode.commands.executeCommand('copyFilePath', selEntry.uri);
-        }));
-      
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copyRelativeFilePath', (selEntry: Entry) => {
-            vscode.commands.executeCommand('copyRelativeFilePath', selEntry.uri);
-        }));
-
-       
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.cut', (selEntry: Entry) => {
-            vscode.commands.executeCommand('filesExplorer.cut', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.copy', (selEntry: Entry) => {
-            vscode.commands.executeCommand('filesExplorer.copy', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.paste', (selEntry: Entry) => {
-            vscode.commands.executeCommand('filesExplorer.paste', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.rename', (selEntry: Entry) => {
-            vscode.commands.executeCommand('renameFile', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.delete', (selEntry: Entry) => {
-            vscode.commands.executeCommand('moveFileToTrash', selEntry.uri);
-        }));
-
-
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.createFile', (selEntry: Entry) => {
-            vscode.commands.executeCommand('explorer.newFile', selEntry.uri);
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('gestola-core.createFolder', (selEntry: Entry) => {
-            vscode.commands.executeCommand('explorer.newFolder', selEntry.uri);
-        }));
-
 
     }
 

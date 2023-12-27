@@ -1,9 +1,9 @@
 import { Action } from "../../actions/Action";
-import { OpenToSideAction } from "../../actions/filesAction/OpenToSideAction";
+import { CreateFileAction } from "../../actions/filesAction/CreateFileAction";
 import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { FilesActionCommand } from "./FilesActionCommands";
 
-export class OpenToSideCommand extends FilesActionCommand {
+export class CreateFileCommand extends FilesActionCommand {
 
     constructor(){
         super('Open to the Side Command');
@@ -14,7 +14,7 @@ export class OpenToSideCommand extends FilesActionCommand {
     }
 
     public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {
-        return [new OpenToSideAction(item, selectedItems)];
+        return [new CreateFileAction(item, selectedItems)];
     }
    
 }

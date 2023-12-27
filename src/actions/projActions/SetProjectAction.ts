@@ -5,7 +5,7 @@ export class SetProjectAction implements Action {
 
     canRevert: boolean;
 
-    constructor(private readonly projManager: ProjectManager, private readonly projects: Project[] | undefined){
+    constructor(private readonly projManager: ProjectManager, private readonly projects: Project[]){
         this.canRevert = false;
     }
 

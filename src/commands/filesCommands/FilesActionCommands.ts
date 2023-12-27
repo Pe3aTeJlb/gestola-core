@@ -1,6 +1,6 @@
-import { Action } from "../actions/Action";
-import { Entry } from "../ui/explorer/filesExplorer/FilesProvider";
-import { BaseCommand } from "./BaseCommand";
+import { Action } from "../../actions/Action";
+import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
+import { BaseCommand } from "../BaseCommand";
 
 export abstract class FilesActionCommand extends BaseCommand {
 
@@ -9,8 +9,7 @@ export abstract class FilesActionCommand extends BaseCommand {
     }
 
     public override async getActionBase(clickedItem: Entry | undefined, selectedItems: readonly Entry[] | undefined): Promise<Action[]> {
-        const item = clickedItem ?? (selectedItems?.length === 1 ? selectedItems[0] : undefined);
-        return this.shouldRun(item) ? this.getActions(item) : [];
+        return this.shouldRun(clickedItem, selectedItems) ? this.getActions(clickedItem, selectedItems) : [];
     }
 
     public abstract override shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean;

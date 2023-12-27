@@ -5,7 +5,7 @@ export class RemoveProjectAction implements Action {
 
     canRevert: boolean;
 
-    constructor(private readonly projManager: ProjectManager, private readonly projects: Project[] | undefined){
+    constructor(private readonly projManager: ProjectManager, private readonly projects: Project[]){
         this.canRevert = !!projects && projects.length > 0;
     }
 

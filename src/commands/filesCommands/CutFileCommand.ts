@@ -3,10 +3,10 @@ import { OpenToSideAction } from "../../actions/filesAction/OpenToSideAction";
 import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
 import { FilesActionCommand } from "./FilesActionCommands";
 
-export class OpenToSideCommand extends FilesActionCommand {
+export class CutFileCommand extends FilesActionCommand {
 
     constructor(){
-        super('Open to the Side Command');
+        super('Cut File Command');
     }
 
     public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
