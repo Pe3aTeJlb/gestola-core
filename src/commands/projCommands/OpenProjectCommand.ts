@@ -1,6 +1,6 @@
 import { Action } from "../../actions/Action";
 import { OpenProjectAction } from "../../actions/projActions/OpenProjectAction";
-import { Project, ProjectManager } from "../../project";
+import { ProjectManager } from "../../project";
 import { ProjectActionCommand } from "./ProjectActionCommand";
 
 export class OpenProjectCommand extends ProjectActionCommand {
@@ -13,7 +13,7 @@ export class OpenProjectCommand extends ProjectActionCommand {
         return true;
     }
 
-    public async getActions(projects: Project[]): Promise<Action[]> {
+    public async getActions(): Promise<Action[]> {
         return [new OpenProjectAction(this.projManager)];
     }
 

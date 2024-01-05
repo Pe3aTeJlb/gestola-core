@@ -149,6 +149,7 @@ export class ProjectManager {
     }
 
     removeProject(proj: Project[]){
+        console.log(proj);
         proj.forEach(p => {
             let toDelete = vscode.workspace.getWorkspaceFolder(p.rootUri);
             if(vscode.workspace.workspaceFolders && toDelete){

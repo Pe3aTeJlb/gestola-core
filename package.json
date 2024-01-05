@@ -2,6 +2,10 @@
   "name": "gestola-core",
   "displayName": "gestola-core",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pe3aTeJlb/gestola-core"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.80.0"
@@ -325,11 +329,6 @@
         "command": "gestola-core.open-project",
         "key": "ctrl+O",
         "when": "focusedView == gestola-explorer-projects && gestola-core.isProjOpened"
-      },
-      {
-        "command": "gestola-core.close-project",
-        "key": "ctrl+W",
-        "when": "focusedView == gestola-explorer-projects"
       },
       {
         "command": "gestola-core.set-project-favorite",

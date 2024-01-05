@@ -27,9 +27,12 @@ export class ProjectCommands{
             context.subscriptions.push(vscode.commands.registerCommand(key, async (...args) => {
                 let actions: Action[] = [];
                 if(args.length !== 0){
-                    actions = await command.getActionBase(args);
+                    actions = await command.getActionBase([args[0]]);
                 } else if(projManager.currProj){
                     actions = await command.getActionBase([projManager.currProj]);
+                } else {
+                    //a.k.a null args
+                    actions = await command.getActionBase(args);
                 }
                 if(actions.length > 0){
                     await actionsRunner.run(actions, {isCancellationRequested: false});

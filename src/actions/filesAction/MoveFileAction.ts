@@ -20,12 +20,10 @@ export class MoveFileAction implements Action {
 				if(this.target.type === vscode.FileType.Directory){
                     let newPath: string = path.join(this.target.uri.path, path.basename(entry.uri.path));
                     this.map.set(entry.uri.path, newPath);
-                    console.log(this.map);
 					fse.move(entry.uri.path, newPath, {overwrite: true});
                 } else {
                     let newPath: string = path.join(path.dirname(this.target.uri.path), path.basename(entry.uri.path));
                     this.map.set(entry.uri.path, newPath);
-                    console.log(this.map);
 					fse.move(entry.uri.path, newPath, {overwrite: true});
                 }
 			});
