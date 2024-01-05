@@ -6,11 +6,11 @@ export class OpenToSideAction implements Action {
 
     canRevert: boolean;
 
-    constructor(readonly item: Entry, selectedItems: readonly Entry[]){
+    constructor(readonly item: Entry){
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
             vscode.commands.executeCommand('explorer.openToSide', this.item.uri);
         }
@@ -18,7 +18,7 @@ export class OpenToSideAction implements Action {
     }
 
     toString(): string {
-        return 'Open to the side ' + this.item.uri.fsPath;
+        return `Open to the side ${this.item.uri.path}`;
     }
 
 }

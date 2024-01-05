@@ -7,8 +7,12 @@ import { TreeFileDecorationProvider } from "./TreeFileDecoratorProvider";
 export class GestolaExplorer{
 
     currTree: vscode.TreeView<Entry> | undefined = undefined;
+    currTreeRoot: Entry | undefined = undefined;
+    projManager: ProjectManager;
 
     constructor(context: vscode.ExtensionContext, projManager: ProjectManager){
+
+        this.projManager = projManager;
 
         vscode.commands.executeCommand(
             'setContext', 

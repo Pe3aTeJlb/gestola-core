@@ -10,17 +10,21 @@ export class RevealFileInOSAction implements Action {
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
-            for(let i = 0; i < this.selectedItems.length; i++){
-                vscode.commands.executeCommand('revealFileInOS', this.selectedItems[i].uri);    
+            if(!this.selectedItems){
+                vscode.commands.executeCommand('revealFileInOS', this.item.uri);
+            } else {
+                for(let i = 0; i < this.selectedItems.length; i++){
+                    vscode.commands.executeCommand('revealFileInOS', this.selectedItems[i].uri);    
+                }
             }
         }
         return Promise.resolve();
     }
 
     toString(): string {
-        return 'Reveal File in OS ' + this.item.uri.fsPath;
+        return `Reveal File in OS ${this.item.uri.path}`;
     }
 
 }

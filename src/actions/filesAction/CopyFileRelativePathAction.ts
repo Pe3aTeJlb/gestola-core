@@ -6,19 +6,28 @@ export class CopyRelativeFilePathAction implements Action {
 
     canRevert: boolean;
 
-    constructor(readonly item: Entry, selectedItems: readonly Entry[]){
+    constructor(readonly item: Entry, readonly selectedItems: readonly Entry[]){
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
-            vscode.commands.executeCommand('copyRelativeFilePath', this.item.uri);
+            if(!this.selectedItems){
+                vscode.commands.executeCommand('copyRelativeFilePath', this.item.uri);
+            } else {
+                let res = "";
+                for(let i = 0; i < this.selectedItems.length; i++){
+                    await vscode.commands.executeCommand('copyRelativeFilePath', this.selectedItems[i].uri);
+                    res += await vscode.env.clipboard.readText() + "\r\n";
+                }
+                await vscode.env.clipboard.writeText(res);
+            }
         }
         return Promise.resolve();
     }
 
     toString(): string {
-        return 'Copy Relative Path ' + this.item.uri.fsPath;
+        return `Copy Relative Path ${this.item.uri.path}, ${this.selectedItems}`;
     }
 
 }

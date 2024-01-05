@@ -9,7 +9,7 @@ export class SetProjectAction implements Action {
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled && this.projects){
             this.projManager.setProject(this.projects[0]);
         }

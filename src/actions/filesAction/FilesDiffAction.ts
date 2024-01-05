@@ -10,7 +10,7 @@ export class FilesDiffAction implements Action {
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
             vscode.commands.executeCommand('vscode.diff', this.selectedItems[0].uri, this.selectedItems[1].uri);
         }
@@ -18,7 +18,7 @@ export class FilesDiffAction implements Action {
     }
 
     toString(): string {
-        return 'Files Diff ' + this.selectedItems[0].uri.fsPath + ' ' + this.selectedItems[1].uri.fsPath;
+        return `Files Diff ${this.selectedItems[0].uri.path}, ${this.selectedItems[1].uri.path}`;
     }
 
 }

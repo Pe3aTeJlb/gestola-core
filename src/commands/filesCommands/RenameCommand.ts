@@ -1,33 +1,41 @@
-import path = require("path");
 import { Action } from "../../actions/Action";
-import { CreateFolderAction } from "../../actions/filesAction/CreateFolderAction";
+import { RenameFileAction } from "../../actions/filesAction/RenameAction";
 import { Entry } from "../../ui/explorer/filesExplorer/FilesProvider";
-import { FSProvider } from "../../utils";
 import { FilesActionCommand } from "./FilesActionCommands";
 import * as vscode from "vscode";
+import * as path from 'path';
+import { FSProvider } from "../../utils";
 
-export class CreateFolderCommand extends FilesActionCommand {
+export class RenameFileCommand extends FilesActionCommand {
 
     constructor(){
-        super('Create Fodler Command');
+        super('Rename File Command');
     }
 
-    public shouldRun(target: Entry | undefined): boolean {
-        return !!target;
+    public shouldRun(item: Entry | undefined): boolean {
+        return !!item;
     }
 
-    public async getActions(target: Entry): Promise<Action[]> {
-        if(!target) { return[]; };
+    public async getActions(item: Entry): Promise<Action[]> {
+        if(!item) { return[]; };
 
-        const name = await this.getText('New folder', 'New folder', "");
-        if (!name) { return []; }
+        const newname = await this.getText('New name', 'New name', path.basename(item.uri.path));
+        if (!newname) { return []; }
 
-        if(await FSProvider.exists(path.join(path.dirname(target.uri.path), name))){
-            vscode.window.showErrorMessage("Conflict name. Entity already exist");
+        const parentFolderPath = path.dirname(item.uri.path);
+        let newfilePath = path.join(parentFolderPath, newname);
+        if (newfilePath === item.uri.path) {
             return [];
         }
 
-        return [new CreateFolderAction(target, name)];
+        const caseChanged = item.uri.path.toLowerCase() === newfilePath.toLowerCase();
+        if (await FSProvider.exists(newfilePath) && !caseChanged) {
+            await vscode.window.showErrorMessage("File already exists");
+            return [];
+        }
+
+        return [new RenameFileAction(item, newname)];
+
     }
 
     private async getText(description: string, placeholder?: string, initialValue?: string): Promise<string | undefined> {

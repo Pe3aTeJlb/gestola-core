@@ -9,12 +9,12 @@ export class CopyFileCommand extends FilesActionCommand {
         super('Copy File Command');
     }
 
-    public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
-        return !!item && !!selectedItems && selectedItems.length > 0;
+    public shouldRun(target: Entry | undefined, toCopy: readonly Entry[] | undefined): boolean {
+        return !!target || !!toCopy && toCopy.length > 0;
     }
 
-    public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {
-        return [new CopyFileAction(item, selectedItems)];
+    public async getActions(target: Entry, toCopy: readonly Entry[]): Promise<Action[]> {
+        return [new CopyFileAction(target, toCopy)];
     }
    
 }

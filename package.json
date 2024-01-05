@@ -13,12 +13,14 @@
   "main": "./out/extension.js",
   "contributes": {
 
-
-
     "commands": [
       {
         "command": "gestola-core.test-msg",
         "title": "Show msg"
+      },
+      {
+        "command": "gestola-core.undo",
+        "title": "Undo"
       },
       {
         "command": "gestola-core.create-project",
@@ -77,10 +79,7 @@
       },
       
 
-      {
-        "command": "gestola-core.cut",
-        "title": "Cut"
-      },
+
       {
         "command": "gestola-core.copy",
         "title": "Copy"
@@ -100,12 +99,56 @@
 
       {
         "command": "gestola-core.createFile",
-        "title": "New File..."
+        "title": "New File...",
+        "icon": "$(new-file)"
       },
       {
         "command": "gestola-core.createFolder",
-        "title": "New Folder..."
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
       },
+
+      {
+        "command": "gestola-core.createFolderHelper1",
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "gestola-core.createFileHelper1",
+        "title": "New File...",
+        "icon": "$(new-file)"
+      },
+       {
+        "command": "gestola-core.createFolderHelper2",
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "gestola-core.createFileHelper2",
+        "title": "New File...",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "gestola-core.createFolderHelper3",
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "gestola-core.createFileHelper3",
+        "title": "New File...",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "gestola-core.createFolderHelper4",
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "gestola-core.createFileHelper4",
+        "title": "New File...",
+        "icon": "$(new-file)"
+      },
+
 
 
 
@@ -115,22 +158,64 @@
       }
 
     ],
+
     "menus": {
       "view/title": [
 
         {
           "command": "gestola-core.open-project",
-          "group": "navigation@1",
-          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened"
+          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened",
+          "group": "navigation@1"
         },
         {
           "command": "gestola-core.create-project",
-          "group": "navigation@2",
-          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened"
+          "when": "view == gestola-explorer-projects && gestola-core.isProjOpened",
+          "group": "navigation@2"
         },
         {
           "command": "gestola-core.refresh",
           "when": "view in gestola-core.explorerFileViews"
+        },
+
+        {
+          "command": "gestola-core.createFolderHelper1",
+          "when": "view == gestola-explorer-systemLvl",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gestola-core.createFileHelper1",
+          "when": "view == gestola-explorer-systemLvl",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gestola-core.createFolderHelper2",
+          "when": "view == gestola-explorer-rtlLvl",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gestola-core.createFileHelper2",
+          "when": "view == gestola-explorer-rtlLvl",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gestola-core.createFolderHelper3",
+          "when": "view == gestola-explorer-topologyLvl",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gestola-core.createFileHelper3",
+          "when": "view == gestola-explorer-topologyLvl",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gestola-core.createFolderHelper4",
+          "when": "view == gestola-explorer-otherFiles",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gestola-core.createFileHelper4",
+          "when": "view == gestola-explorer-otherFiles",
+          "group": "navigation@2"
         }
 
       ],
@@ -155,12 +240,12 @@
 
         {
           "command": "gestola-core.createFile",
-          "when": "view in gestola-core.explorerFileViews && viewItem == folder",
+          "when": "view in gestola-core.explorerFileViews",
           "group": "1_create@1"
         },
         {
           "command": "gestola-core.createFolder",
-          "when": "view in gestola-core.explorerFileViews && viewItem == folder",
+          "when": "view in gestola-core.explorerFileViews",
           "group": "1_create@1"
         },
         {
@@ -199,34 +284,89 @@
           "group": "4_path@2"
         },
         {
-          "command": "gestola-core.cut",
+          "command": "gestola-core.copy",
           "when": "view in gestola-core.explorerFileViews",
           "group": "5_copy@1"
         },
         {
-          "command": "gestola-core.copy",
+          "command": "gestola-core.paste",
           "when": "view in gestola-core.explorerFileViews",
           "group": "5_copy@2"
         },
         {
-          "command": "gestola-core.paste",
+          "command": "gestola-core.rename",
           "when": "view in gestola-core.explorerFileViews",
           "group": "5_copy@3"
         },
         {
-          "command": "gestola-core.rename",
-          "when": "view in gestola-core.explorerFileViews",
-          "group": "5_copy@4"
-        },
-        {
           "command": "gestola-core.delete",
           "when": "view in gestola-core.explorerFileViews",
-          "group": "5_copy@5"
+          "group": "5_copy@4"
         }
         
 
       ]
     },
+
+    "keybindings": [
+
+      {
+        "command": "gestola-core.undo",
+        "key": "ctrl+Z",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      },
+
+      {
+        "command": "gestola-core.create-project",
+        "key": "ctrl+N",
+        "when": "focusedView == gestola-explorer-projects && gestola-core.isProjOpened"
+      },
+      {
+        "command": "gestola-core.open-project",
+        "key": "ctrl+O",
+        "when": "focusedView == gestola-explorer-projects && gestola-core.isProjOpened"
+      },
+      {
+        "command": "gestola-core.close-project",
+        "key": "ctrl+W",
+        "when": "focusedView == gestola-explorer-projects"
+      },
+      {
+        "command": "gestola-core.set-project-favorite",
+        "key": "ctrl+F",
+        "when": "focusedView == gestola-explorer-projects"
+      },
+      
+     
+
+      {
+        "command": "gestola-core.openToSide",
+        "key": "ctrl+Enter",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      },
+
+      {
+        "command": "gestola-core.copy",
+        "key": "ctrl+c",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      },
+      {
+        "command": "gestola-core.paste",
+        "key": "ctrl+v",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      },
+      {
+        "command": "gestola-core.rename",
+        "key": "f2",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      },
+      {
+        "command": "gestola-core.delete",
+        "key": "delete",
+        "when": "focusedView in gestola-core.explorerFileViews"
+      }
+
+      ],
 
 
 

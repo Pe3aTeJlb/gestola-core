@@ -6,11 +6,11 @@ export class OpenInIntegratedTerminalAction implements Action {
 
     canRevert: boolean;
 
-    constructor(readonly item: Entry, selectedItems: readonly Entry[]){
+    constructor(readonly item: Entry){
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
             vscode.commands.executeCommand('explorer.openInIntegratedTerminal', this.item.uri);
         }
@@ -18,7 +18,7 @@ export class OpenInIntegratedTerminalAction implements Action {
     }
 
     toString(): string {
-        return 'Open in integrated terminal ' + this.item.uri.fsPath;
+        return `Open in integrated terminal ${this.item.uri.path}`;
     }
 
 }

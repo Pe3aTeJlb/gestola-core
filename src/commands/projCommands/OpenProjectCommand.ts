@@ -9,7 +9,7 @@ export class OpenProjectCommand extends ProjectActionCommand {
         super('Open Project Command');
     }
 
-    public shouldRun(projects: Project[] | undefined): boolean {
+    public shouldRun(): boolean {
         return true;
     }
 

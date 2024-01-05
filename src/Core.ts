@@ -31,6 +31,10 @@ export class Core {
             vscode.commands.registerCommand('gestola-core.test-msg', this.showInformationMessage, this)
         );
 
+        context.subscriptions.push(vscode.commands.registerCommand("gestola-core.undo", () => {
+            this.actionsRunner.undo();
+		}));
+
     }
 
     showInformationMessage(msg = "default message"){

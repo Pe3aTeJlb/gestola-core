@@ -9,11 +9,11 @@ export class CreateProjectCommand extends ProjectActionCommand {
         super('Create Project Command');
     }
 
-    public shouldRun(projects: Project[] | undefined): boolean {
+    public shouldRun(): boolean {
         return true;
     }
 
-    public async getActions(projects: Project[]): Promise<Action[]> {
+    public async getActions(): Promise<Action[]> {
         return [new CreateProjectAction(this.projManager)];
     }
    

@@ -9,14 +9,14 @@ export class RemoveProjectAction implements Action {
         this.canRevert = !!projects && projects.length > 0;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled && this.projects){
             this.projManager.removeProject(this.projects);
         }
         return Promise.resolve();
     }
 
-    public revert(): Promise<void> {
+    public async revert(): Promise<void> {
         if(this.projects){
             this.projManager.addProject(this.projects?.map(i => i.rootUri));
         }

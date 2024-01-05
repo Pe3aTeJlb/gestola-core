@@ -6,19 +6,28 @@ export class CopyFileAction implements Action {
 
     canRevert: boolean;
 
-    constructor(readonly item: Entry, selectedItems: readonly Entry[]){
+    constructor(readonly item: Entry, readonly selectedItems: readonly Entry[]){
         this.canRevert = false;
     }
 
-    public execute(context: ActionContext): Promise<void> {
+    public async execute(context: ActionContext): Promise<void> {
         if(!context.cancelled){
-            vscode.commands.executeCommand('explorer.openToSide', this.item.uri);
+            if(!this.selectedItems){
+                vscode.commands.executeCommand('copyFilePath', this.item.uri);
+            } else {
+                let res = "";
+                for(let i = 0; i < this.selectedItems.length; i++){
+                    await vscode.commands.executeCommand('copyFilePath', this.selectedItems[i].uri);
+                    res += await vscode.env.clipboard.readText() + "\r\n";
+                }
+                await vscode.env.clipboard.writeText(res);
+            }
         }
         return Promise.resolve();
     }
 
     toString(): string {
-        return 'Copy File ' + this.item.uri.fsPath;
+        return `Copy File ${this.item}, ${this.selectedItems}`;
     }
 
 }

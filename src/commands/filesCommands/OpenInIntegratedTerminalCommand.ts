@@ -9,12 +9,12 @@ export class OpenInIntegratedTerminalCommand extends FilesActionCommand {
         super('Open in Integrated Terminal Command');
     }
 
-    public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
-        return !!item && !!selectedItems && selectedItems.length > 0;
+    public shouldRun(item: Entry | undefined): boolean {
+        return !!item;
     }
 
-    public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {
-        return [new OpenInIntegratedTerminalAction(item, selectedItems)];
+    public async getActions(item: Entry): Promise<Action[]> {
+        return [new OpenInIntegratedTerminalAction(item)];
     }
    
 }

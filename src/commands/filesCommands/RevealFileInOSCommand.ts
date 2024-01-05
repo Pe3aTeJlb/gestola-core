@@ -10,7 +10,7 @@ export class RevealFileInOSCommand extends FilesActionCommand {
     }
 
     public shouldRun(item: Entry | undefined, selectedItems: readonly Entry[] | undefined): boolean {
-        return !!item && !!selectedItems && selectedItems.length > 0;
+        return !!item || !!selectedItems && selectedItems.length > 0;
     }
 
     public async getActions(item: Entry, selectedItems: readonly Entry[]): Promise<Action[]> {

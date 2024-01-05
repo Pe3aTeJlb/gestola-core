@@ -6,8 +6,6 @@ import * as rimraf from 'rimraf';
 import { ProjectManager } from '../../../project';
 import { FilesTreeItem } from './FilesTreeItem';
 import { GestolaExplorer } from '../GestolaExplorer';
-import * as fse from 'fs-extra';
-import { type } from 'os';
 import G = require('glob');
 
 
@@ -157,9 +155,6 @@ export interface Entry {
 	type: vscode.FileType;
 }
 
-type Node = { 	uri: vscode.Uri;
-				type: vscode.FileType; };
-
 //#endregion
 
 export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vscode.TreeDragAndDropController<Entry>, vscode.FileSystemProvider {
@@ -167,12 +162,13 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 	private _onDidChangeFile: vscode.EventEmitter<vscode.FileChangeEvent[]>;
 	private view: string;
 	private root: vscode.Uri | undefined;
+	private rootEntry: Entry | undefined;
 
     private projManager: ProjectManager;
 	private treeView: vscode.TreeView<Entry>;
 	private watcher: vscode.FileSystemWatcher | undefined;
 
-	constructor(context: vscode.ExtensionContext, explorer: GestolaExplorer, projManager: ProjectManager, view: string) {
+	constructor(readonly context: vscode.ExtensionContext, explorer: GestolaExplorer, projManager: ProjectManager, view: string) {
 
 		this._onDidChangeFile = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
 
@@ -194,6 +190,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 		this.treeView.onDidChangeSelection(() => {
 
             explorer.currTree = this.treeView;
+			explorer.currTreeRoot = this.rootEntry;
 
             vscode.commands.executeCommand('setContext', 'gestola-core.selectionContextSingle', this.treeView.selection.length === 1);
             vscode.commands.executeCommand('setContext', 'gestola-core.selectionContextDouble', this.treeView.selection.length === 2);
@@ -201,7 +198,6 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
         });
 		context.subscriptions.push(this.treeView);
-
 
 	}
 
@@ -334,6 +330,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 				default: rt = this.projManager.currProj.systemFolderUri; break;
 			}
 			this.root = rt;
+			this.rootEntry = {uri: this.root, type: vscode.FileType.Directory};
 
 			this.watcher = vscode.workspace.createFileSystemWatcher(
 				new vscode.RelativePattern(this.root, "**/*")
@@ -374,53 +371,36 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>,  vsco
 
 	public async handleDrop(target: Entry, source: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
 
+		if(!target && this.rootEntry) {
+			target = this.rootEntry;
+		}
+
 		if (source.get('explorer/treeitem')) {
 
-			const entries: string[] = (source.get('explorer/treeitem')?.value as string).replace("[", "").replace("]", "").replace(/"/g, "").split(",");
-
-			entries.forEach((l) => {
-
-				let el = vscode.Uri.file(l);
-
-				if(target){	
-					target.type === vscode.FileType.Directory
-					? fse.move(el.fsPath, path.join(target.uri.fsPath, path.basename(el.fsPath)))
-					: fse.move(el.fsPath, path.join(path.dirname(target.uri.fsPath), path.basename(el.fsPath)));
-				} else {
-					if(this.root){
-						fse.move(el.fsPath, path.join(this.root.fsPath, path.basename(el.fsPath)));
-					}
-				}
-
-			});
+			const entries: Entry[] = JSON.parse((source.get('explorer/treeitem')?.value));
+		
+			vscode.commands.executeCommand('gestola-core.moveFile', target, entries);
 			
 		} else {
 
 			let list: string = source.get('text/uri-list')?.value;
-			let entries: string[] = list.split("\r\n");
-	
-			entries.forEach((l) => {
-	
-				let el = vscode.Uri.parse(l);
+			let strings: string[] = list.split("\r\n");
+			let entries: Entry[] = [];
 
-				if(target){
-					target.type === vscode.FileType.Directory
-					? fse.copy(el.fsPath, path.join(target.uri.fsPath, path.basename(el.fsPath)))
-					: fse.copy(el.fsPath, path.join(path.dirname(target.uri.fsPath), path.basename(el.fsPath)));
-				} else {
-					if(this.root) {
-						fse.copy(el.fsPath, path.join(this.root.fsPath, path.basename(el.fsPath)));
-					}
-				}
-
-			});
+			strings.forEach(i => entries.push({uri: vscode.Uri.parse(i), type: 0 }));
+			
+			vscode.commands.executeCommand(
+				'gestola-core.addExternalFile', 
+				target, 
+				entries
+			);
 
 		}
 
 	}
 
 	public async handleDrag(source: Entry[], treeDataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): Promise<void> {
-		treeDataTransfer.set('explorer/treeitem', new vscode.DataTransferItem(source.map(i => i.uri.fsPath)));
+		treeDataTransfer.set('explorer/treeitem', new vscode.DataTransferItem(source));
 	}
 
 }

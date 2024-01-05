@@ -7,6 +7,7 @@ import { OpenProjectCommand } from '../commands/projCommands/OpenProjectCommand'
 import { SetProjectCommand } from '../commands/projCommands/SetProjectCommand';
 import { RemoveProjectCommand } from '../commands/projCommands/RemoveProjectCommand';
 import { SetProjectFavoriteCommand } from '../commands/projCommands/SetProjectFavoriteCommand';
+import { Action } from '../actions/Action';
 
 export class ProjectCommands{
 
@@ -24,7 +25,12 @@ export class ProjectCommands{
 
         for (let [key, command] of this.commands) {
             context.subscriptions.push(vscode.commands.registerCommand(key, async (...args) => {
-                const actions = await command.getActionBase(args);
+                let actions: Action[] = [];
+                if(args.length !== 0){
+                    actions = await command.getActionBase(args);
+                } else if(projManager.currProj){
+                    actions = await command.getActionBase([projManager.currProj]);
+                }
                 if(actions.length > 0){
                     await actionsRunner.run(actions, {isCancellationRequested: false});
                 }
